@@ -26,63 +26,56 @@ import Objects.Ball;
 public class Graphic extends JPanel implements ActionListener, KeyListener {
 	Timer t = new Timer(10, this);
 	int lives = 3;
-	JTextField GameOver = new JTextField("Game Over");
-	JTextField Level = new JTextField("Level: ");
-	ArrayList<ArrayList<Objects.Block>> blockMess = new ArrayList<ArrayList<Objects.Block>>();
+	JTextField gameOver = new JTextField("Game Over");
+	JTextField level = new JTextField("level: ");
+	List<Block> blocks = new ArrayList<Block>();
+	Ball ball = Ball.getInstance(1, 1, 285, 350, 30);
+	Ramp ramp = Ramp.getInstance(300, 0);
 	{
-		for (int i = 0; i < 10; i++) {
-			ArrayList<Block> a = new ArrayList<Block>();
-			blockMess.add(a);
-			for (int j = 0; j < 5; j++) {
-				Block b = new Block();
-				blockMess.get(i).add(b);
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 10; j++) {
+				Block block = new Block(65 + j * 45, 50 + i * 45, 45, 45, 1);
+				blocks.add(block);
 			}
 		}
 	}
-	Ball ball = Ball.createBall(1, 1, 285, 350);
-	Ramp ramp = Ramp.makeRamp(300, 0);
 
 	public Graphic() {
 		t.start();
 		Font f = new Font("Arial", 300, 100);
 		Font f2 = new Font("Arial", 150, 50);
-		Dimension go = GameOver.getPreferredSize();
-		Dimension s = Level.getPreferredSize();
-		GameOver.setBounds(25, 200, (int) go.getWidth() * 8, (int) go.getHeight() * 5);
-		GameOver.setFont(f);
-		GameOver.setEditable(false);
-		Level.setBounds(75, 350, (int) s.getWidth() * 12, (int) (s.getHeight() * 5));
-		Level.setFont(f);
-		Level.setEditable(false);
+		Dimension gameOverDim = gameOver.getPreferredSize();
+		Dimension levelDim = level.getPreferredSize();
+		gameOver.setBounds(25, 200, (int) gameOverDim.getWidth() * 8, (int) gameOverDim.getHeight() * 5);
+		gameOver.setFont(f);
+		gameOver.setEditable(false);
+		level.setBounds(75, 350, (int) levelDim.getWidth() * 12, (int) (levelDim.getHeight() * 5));
+		level.setFont(f);
+		level.setEditable(false);
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
 		setLayout(null);
 	}
+
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
-		
-		collision();
-		for (int j = 0; j < 5; j++) {
-			for (int i = 0; i < 10; i++) {
-				if (!blockMess.get(i).get(j).getDestroyed()) {
-					g2.setColor(Color.WHITE);
-					g2.fill(new Rectangle2D.Double(65 + i * 45, 50 + j * 45, 45, 45));
-					g2.setColor(Color.BLACK);
-					g2.fill(new Rectangle2D.Double(67 + i * 45, 52 + j * 45, 41, 41));
-				}
-			}
+		for (Block b : blocks)
+			collision(b);
+		wallCollision();
+
+		for (Block i : blocks) {
+			i.render(g2);
 		}
-		g2.setColor(Color.BLUE);
-		g2.fill(new Ellipse2D.Double(ball.getX(), ball.getY(), 30, 30));
-		g2.setColor(Color.BLACK);
+		ball.render(g2);
+		ramp.render(g2);
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -101,32 +94,58 @@ public class Graphic extends JPanel implements ActionListener, KeyListener {
 	public void actionPerformed(ActionEvent e) {
 		if (Main.gameOver == false) {
 			repaint();
-			ball.setX(ball.getX() + ball.getVelX());
+			if (ball.getClass() == Ball.class)
+				ball.setX(ball.getX() + ball.getVelX());
 			ball.setY(ball.getY() + ball.getVelY());
 		}
 
 	}
 
-	public void collision() {
-		if (ball.getX() + 30 == 585 || ball.getX() == 0)
-			ball.setVelX(-ball.getVelX());
-		if (ball.getY() + 30 == 562 || ball.getY() == 0)
-			ball.setVelY(-ball.getVelY());
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 10; j++) {
-				if (blockMess.get(j).get(i).getDestroyed() == false
-						&& (ball.getX() == 100 + j * 45 || ball.getX() + 30 == 65 + j * 45) && ball.getY() > 50 && ball.getY() < 275) {
+	public void collision(Block b) {
+//		if (ball.getX() + 30 == 585 || ball.getX() == 0)
+//			ball.setVelX(-ball.getVelX());
+//		if (ball.getY() + 30 == 562 || ball.getY() == 0)
+//			ball.setVelY(-ball.getVelY());
+//			for (int j = 0; j < 50; j++) {
+//				if (blocks.get(j).getDestroyed() == false
+//						&& (ball.getX() == 100 + j * 45 || ball.getX() + 30 == 65 + j * 45) && ball.getY() > 50
+//						&& ball.getY() < 275) {
+//					ball.setVelX(-ball.getVelX());
+//					blocks.get(j).setHardness(blocks.get(j).getHardness() - 1);
+//				}
+//
+//				if (blocks.get(j).getDestroyed() == false
+//						&& (ball.getY() == 50 + blocks.get(j).getY() || ball.getY() + 30 == blocks.get(j).getY()) && ball.getX() > 65
+//						&& ball.getX() < 515) {
+//					ball.setVelX(-ball.getVelX());
+//					blocks.get(j).setHardness(blocks.get(j).getHardness() - 1);
+//				}
+//			}
+		if (b.getDestroyed() == false) {
+			if ((b.getX() == ball.getX() + ball.getRad() || b.getX() + b.getWidth() == ball.getX()
+					^ ((b.getY() == ball.getY() + 2 * ball.getRad() || b.getY() + b.getHeight() == ball.getY())))) {
+				if (b.getX() == ball.getX() + ball.getRad() || b.getX() + b.getWidth() == ball.getX()) {
 					ball.setVelX(-ball.getVelX());
-					blockMess.get(i).get(j).setHardness(blockMess.get(i).get(j).getHardness() - 1);
+				} else {
+					ball.setVelY(-ball.getVelY());
 				}
 
-				if (blockMess.get(j).get(i).getDestroyed() == false
-						&& (ball.getY() == 50 + i * 45 || ball.getY() + 30 == 65 + i * 45) && ball.getX() > 65 && ball.getX() < 515) {
-					ball.setVelX(-ball.getVelX());
-					blockMess.get(i).get(j).setHardness(blockMess.get(i).get(j).getHardness() - 1);
-				}
+			} else if ((b.getX() == ball.getX() + ball.getRad() || b.getX() + b.getWidth() == ball.getX()
+					&& ((b.getY() == ball.getY() + 2 * ball.getRad() || b.getY() + b.getHeight() == ball.getY())))) {
+				if (ball.getX() > blocks.get(0).getX()
+						&& ball.getX() < blocks.get(blocks.size()).getX() + blocks.get(blocks.size()).getWidth())
+					ball.setVelY(-ball.getVelY());
+			} else {
+				ball.setVelX(-ball.getVelX());
 			}
 		}
 	}
+	
+	public void wallCollision() {
+		if (ball.getX() + 2 * ball.getRad() == Main.SCREEN_WIDTH || ball.getX() == 0)
+			ball.setVelX(-ball.getVelX());
+		if (ball.getY() + 2 * ball.getRad() == Main.SCREEN_HEIGHT || ball.getY() == 0)
+			ball.setVelY(-ball.getVelY());
 
+	}
 }

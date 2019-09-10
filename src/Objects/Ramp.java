@@ -1,13 +1,14 @@
 package Objects;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class Ramp extends GameObject {
 	private int x;
 	private int y = 500;
 	private int vel;
-	private int WIDTH;
-	private int HEIGHT;
+	private int width;
+	private int height;
 	private static Ramp ramp = null;
 	
 	private Ramp(int x, int vel) {
@@ -15,7 +16,7 @@ public class Ramp extends GameObject {
 		this.vel = vel;
 	}
 	
-	public static Ramp makeRamp(int x, int vel) {
+	public static Ramp getInstance(int x, int vel) {
 		if(ramp == null)
 			ramp = new Ramp(x, vel);
 		
@@ -40,6 +41,7 @@ public class Ramp extends GameObject {
 	
 	@Override
 	public void render(Graphics2D g2d) {
-		g2d.fillRect(x, y, WIDTH, HEIGHT);
+		g2d.setColor(Color.black);
+		g2d.fillRect(x, y, width, height);
 	}
 }
