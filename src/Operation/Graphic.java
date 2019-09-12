@@ -29,8 +29,8 @@ public class Graphic extends JPanel implements ActionListener, KeyListener {
 	JTextField gameOver = new JTextField("Game Over");
 	JTextField level = new JTextField("level: ");
 	List<Block> blocks = new ArrayList<Block>();
-	Ball ball = Ball.getInstance(1, 1, 285, 350, 30);
-	Ramp ramp = Ramp.getInstance(300, 0);
+	Ball ball = Ball.getInstance();
+	Ramp ramp = Ramp.getInstance();
 	{
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 10; j++) {

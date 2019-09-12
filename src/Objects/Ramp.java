@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class Ramp extends GameObject {
+    public static final int INIT_X = 300;
+    public static final int INIT_VELX = 0;
 	private int x;
 	private int y = 500;
 	private int vel;
@@ -16,9 +18,9 @@ public class Ramp extends GameObject {
 		this.vel = vel;
 	}
 	
-	public static Ramp getInstance(int x, int vel) {
+	public static Ramp getInstance() {
 		if(ramp == null)
-			ramp = new Ramp(x, vel);
+			ramp = new Ramp(INIT_X, INIT_VELX);
 		
 		return ramp;
 	}
