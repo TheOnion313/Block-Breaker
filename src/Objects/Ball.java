@@ -5,6 +5,11 @@ import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 
 public class Ball extends GameObject {
+    public static final int INIT_X = 300;
+    public static final int INIT_Y = 300;
+    public static final int INIT_VELX = 1;
+    public static final int INIT_VELY = 1;
+    public static final int INIT_RADIUS = 30;
 	private int velx;
 	private int vely;
 	private int x;
@@ -12,17 +17,17 @@ public class Ball extends GameObject {
 	private int radius;
 	private static Ball ball = null;
 
-	private Ball(int vx, int vy, int x, int y, int rad) {
-		x = x;
-		y = y;
-		velx = vx;
-		vely = vy;
-		radius = rad;
+	private Ball(int x, int y, int velx, int vely, int radius) {
+		this.x = x;
+		this.y = y;
+		this.velx = velx;
+		this.vely = vely;
+		this.radius = radius;
 	}
 
-	public static Ball getInstance(int vx, int vy, int x, int y, int radius) {
+	public static Ball getInstance() {
 		if (ball == null)
-			ball = new Ball(vx, vy, x, y, radius);
+			ball = new Ball(INIT_X, INIT_Y, INIT_VELX, INIT_VELY, INIT_RADIUS);
 		return ball;
 
 	}
